@@ -1,0 +1,21 @@
+{
+    "name": "tuisongbao",
+    "description": "tuisongbao PHP SDK",
+    "keywords": ["tuisongbao", "sdk"],
+    "type": "library",
+    "homepage": "https://github.com/tuisongbao/php5-sdk",
+    "license": "Apache2",
+    "authors": [
+        {
+            "name": "Aaron Wang"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "classmap": ["lib"]
+    }
+}
