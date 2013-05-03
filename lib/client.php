@@ -1,13 +1,17 @@
 <?php
   require_once 'utils.php';
 
-  date_default_timezone_set('Asia/Shanghai');
+  if (!function_exists('curl_init')) {
+    throw new Exception('tuisongbao needs the CURL PHP extension.');
+  }
+  if (!function_exists('json_decode')) {
+    throw new Exception('tuisongbao needs the JSON PHP extension.');
+  }
 
   class Client
   {
     const FORMAT = 'json';
     const API_VERSION = '1.0';
-    const DATETIME_FORMAT = 'Y-m-d H:i:s';
     const BASE_URL = 'http://rest.tuisongbao.com';
     const NOTIFICATION_URL = '/notification';
 
@@ -20,7 +24,7 @@
       $this->sysParams['v'] = self::API_VERSION;
     }
 
-    public function pushNotificationToAll($appkey, $message, $extra=NULL, $est=NULL)
+    public function sendNotificationToAll($appkey, $message, $extra=NULL, $est=NULL)
     {
       $options = array();
       $options['appkey'] = $appkey;
@@ -28,10 +32,10 @@
       $options['extra'] = $extra;
       $options['est'] = $est;
 
-      return $this->_pushNotification($options);
+      return $this->_sendNotification($options);
     }
 
-    public function pushNOtificationByTokens($appkey, $tokens, $message, $extra=NULL, $est=NULL)
+    public function sendNotificationByTokens($appkey, $tokens, $message, $extra=NULL, $est=NULL)
     {
       $options = array();
       $options['appkey'] = $appkey;
@@ -40,10 +44,10 @@
       $options['extra'] = $extra;
       $options['est'] = $est;
 
-      return $this->_pushNotification($options);
+      return $this->_sendNotification($options);
     }
 
-    public function pushNOtificationByChannels($appkey, $channels, $message, $extra=NULL, $est=NULL)
+    public function sendNotificationByChannels($appkey, $channels, $message, $extra=NULL, $est=NULL)
     {
       $options = array();
       $options['appkey'] = $appkey;
@@ -52,10 +56,10 @@
       $options['extra'] = $extra;
       $options['est'] = $est;
 
-      return $this->_pushNotification($options);
+      return $this->_sendNotification($options);
     }
 
-    public function pushNOtificationByAppVersion($appkey, $appv, $message, $extra=NULL, $est=NULL)
+    public function sendNotificationByAppVersion($appkey, $appv, $message, $extra=NULL, $est=NULL)
     {
       $options = array();
       $options['appkey'] = $appkey;
@@ -64,10 +68,10 @@
       $options['extra'] = $extra;
       $options['est'] = $est;
 
-      return $this->_pushNotification($options);
+      return $this->_sendNotification($options);
     }
 
-    public function pushNOtificationByChannelsAndAppVersion($appkey, $channels, $appv, $message, $extra=NULL, $est=NULL)
+    public function sendNotificationByChannelsAndAppVersion($appkey, $channels, $appv, $message, $extra=NULL, $est=NULL)
     {
       $options = array();
       $options['appkey'] = $appkey;
@@ -77,10 +81,10 @@
       $options['extra'] = $extra;
       $options['est'] = $est;
 
-      return $this->_pushNotification($options);
+      return $this->_sendNotification($options);
     }
 
-    private function _pushNotification($options)
+    private function _sendNotification($options)
     {
       if (array_key_exists('extra', $options)) {
         if (is_null($options['extra'])) {
@@ -92,7 +96,7 @@
         if (is_null($options['est'])) {
           unset($options['est']);
         } else {
-          $options['est'] = date(self::DATETIME_FORMAT, $options['est']);
+          $options['est'] = Utils::formatDatetime($options['est']);
         }
       }
 
@@ -127,7 +131,7 @@
 
     private function _request($url, $params, $paramsToSign, $get=TRUE)
     {
-      $params['timestamp'] = $paramsToSign['timestamp'] = date(self::DATETIME_FORMAT);
+      $params['timestamp'] = $paramsToSign['timestamp'] = Utils::formatDatetime();
       $params['sign'] = Utils::md5Sign($paramsToSign, $this->sysParams['apisecret']);
 
       $ch = curl_init($url);
@@ -143,26 +147,44 @@
       $result = curl_exec($ch);
 
       if (curl_errno($ch)) {
-        throw new Exception('curl error: ' . curl_error($ch));
+        throw new TuisongbaoException('curl error: ' . curl_error($ch));
       }
 
       $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       if($httpCode != 200) {
-        throw new Exception('http request failed, httpCode: '.$httpCode);
+        throw new TuisongbaoException('http request failed, httpCode: '.$httpCode);
       }
 
       $result = json_decode($result, TRUE);
       if (is_null($result)) {
-        throw new Exception('got invalid response');
+        throw new TuisongbaoException('got invalid response');
       }
 
-      if ($result['ack'] != '200') {
-        throw new Exception($result['error']);
+      if ($result['ack'] != '0') {
+        throw new TuisongbaoException($result['error'], $result['ack']);
       }
 
       curl_close($ch);
 
       return $result;
+    }
+  }
+
+  class TuisongbaoException extends Exception
+  {
+    public function __construct($message, $code = NUll)
+    {
+      parent::__construct($message, $code);
+    }
+
+    public function __toString()
+    {
+      $msg = __CLASS__.'{$this->message}';
+      if (!is_null($this->code)) {
+        $msg.', ack: {$this->code}';
+      }
+
+      return $msg.'\n';
     }
   }
 ?>
