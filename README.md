@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/tuisongbao/php5-sdk.png?branch=master)](https://travis-ci.org/tuisongbao/php5-sdk)
 
 ### 安装
-PHP版本要求：>=5.0
+PHP版本要求：>=5.2
 
     pear channel-discover pearhub.org
     pear install tuisongbao
