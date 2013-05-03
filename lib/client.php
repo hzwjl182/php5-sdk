@@ -24,80 +24,55 @@
       $this->sysParams['v'] = self::API_VERSION;
     }
 
-    public function sendNotificationToAll($appkey, $message, $extra=NULL, $est=NULL)
+    public function sendNotificationToAll($appkey, $message, $options=array())
     {
-      $options = array();
       $options['appkey'] = $appkey;
       $options['message'] = $message;
-      $options['extra'] = $extra;
-      $options['est'] = $est;
 
       return $this->_sendNotification($options);
     }
 
-    public function sendNotificationByTokens($appkey, $tokens, $message, $extra=NULL, $est=NULL)
+    public function sendNotificationByTokens($appkey, $tokens, $message, $options=array())
     {
-      $options = array();
       $options['appkey'] = $appkey;
       $options['tokens'] = $tokens;
       $options['message'] = $message;
-      $options['extra'] = $extra;
-      $options['est'] = $est;
 
       return $this->_sendNotification($options);
     }
 
-    public function sendNotificationByChannels($appkey, $channels, $message, $extra=NULL, $est=NULL)
+    public function sendNotificationByChannels($appkey, $channels, $message, $options=array())
     {
-      $options = array();
       $options['appkey'] = $appkey;
       $options['channels'] = $channels;
       $options['message'] = $message;
-      $options['extra'] = $extra;
-      $options['est'] = $est;
 
       return $this->_sendNotification($options);
     }
 
-    public function sendNotificationByAppVersion($appkey, $appv, $message, $extra=NULL, $est=NULL)
+    public function sendNotificationByAppVersion($appkey, $appv, $message, $options=array())
     {
-      $options = array();
       $options['appkey'] = $appkey;
       $options['appv'] = $appv;
       $options['message'] = $message;
-      $options['extra'] = $extra;
-      $options['est'] = $est;
 
       return $this->_sendNotification($options);
     }
 
-    public function sendNotificationByChannelsAndAppVersion($appkey, $channels, $appv, $message, $extra=NULL, $est=NULL)
+    public function sendNotificationByChannelsAndAppVersion($appkey, $channels, $appv, $message, $options=array())
     {
-      $options = array();
       $options['appkey'] = $appkey;
       $options['channels'] = $channels;
       $options['appv'] = $appv;
       $options['message'] = $message;
-      $options['extra'] = $extra;
-      $options['est'] = $est;
 
       return $this->_sendNotification($options);
     }
 
     private function _sendNotification($options)
     {
-      if (array_key_exists('extra', $options)) {
-        if (is_null($options['extra'])) {
-          unset($options['extra']);
-        }
-      }
-
       if (array_key_exists('est', $options)) {
-        if (is_null($options['est'])) {
-          unset($options['est']);
-        } else {
-          $options['est'] = Utils::formatDatetime($options['est']);
-        }
+        $options['est'] = Utils::formatDatetime($options['est']);
       }
 
       $params = $options + $this->sysParams;
