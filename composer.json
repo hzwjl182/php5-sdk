@@ -1,13 +1,13 @@
 {
-    "name": "tuisongbao",
-    "description": "tuisongbao PHP SDK",
-    "keywords": ["tuisongbao", "sdk"],
+    "name": "Tuisongbao",
+    "description": "Tuisongbao SDK",
+    "keywords": ["Tuisongbao", "sdk"],
     "type": "library",
     "homepage": "https://github.com/tuisongbao/php5-sdk",
-    "license": "Apache2",
+    "license": "Apache",
     "authors": [
         {
-            "name": "Aaron Wang"
+            "name": "www.tuisongbao.com"
         }
     ],
     "require": {

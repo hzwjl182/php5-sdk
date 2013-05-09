@@ -74,7 +74,7 @@ try {
 ### 说明：
 
 * 所有 *sendNotification* 方法均有一个可选参数 *options(array)* ，可用于设置 *extra* 、 *est* 等可选项
-* 当推送给苹果设备时，如果 *extra* 中含有的 *aps* 字段， *message* 会被忽略
+* 当推送给苹果设备时，如果 *extra* 中含有 *aps* 字段， *message* 会被忽略
 * *est* 必须为 **timestamp**  类型（不需要考虑时区），例如：`mktime(2013, 7, 7, 0, 0, 0)`
 
 ### Example 7: 推送消息给全部苹果用户， 且定时在2013年7月7日 00:00:00发送
@@ -84,19 +84,19 @@ from datetime import datetime
 
 options = array();
 options['extra'] = {
-    "aps"  => array(
-        "alert"  => array(
-            "body"  => "hello world",
-            "action-loc-key"  => "",
-            "loc-key"  => "",
-            "loc-args"  => [],
-            "launch-image"  => ""
+    "aps" => array(
+        "alert" => array(
+            "body" => "hello world",
+            "action-loc-key" => "",
+            "loc-key" => "",
+            "loc-args" => [],
+            "launch-image" => ""
         ),
-        "badge"  => 1,
-        "sound"  => "alert.aov"
+        "badge" => 1,
+        "sound" => "alert.aov"
     ),
-    "key1"  => "value1",
-    "key2"  => "value2"
+    "key1" => "value1",
+    "key2" => "value2"
 );
 options['est'] = mktime(2013, 7, 7, 0, 0, 0);
 
