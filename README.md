@@ -5,8 +5,8 @@
 ### 安装
 PHP版本要求：>=5.2
 
-    pear channel-discover pearhub.org
-    pear install tuisongbao
+    pear channel-discover tuisongbao.pearfarm.org
+    pear install tuisongbao/tuisongbao
 
 ### Example 1:  初始化客户端
 
