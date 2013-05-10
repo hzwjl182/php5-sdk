@@ -31,7 +31,7 @@ try {
 
 ```php
 try {
-    $nid = client.sendNotificationByChannels('app-key', ['channel1'], 'hello world');
+    $nid = client.sendNotificationByChannels('app-key', array('channel1'), 'hello world');
     echo sprintf('notification id: %s' , $nid);
 } catch (TuisongbaoException $e) {
     echo sprintf('error message: %s, ack code: %s', $e.message, $e.code);
@@ -42,7 +42,7 @@ try {
 
 ```php
 try {
-    $nid = client.sendNotificationByAppVersion('app-key', ['version1'], 'hello world');
+    $nid = client.sendNotificationByAppVersion('app-key', array('version1'), 'hello world');
     echo sprintf('notification id: %s' , $nid);
 } catch (TuisongbaoException $e) {
     echo sprintf('error message: %s, ack code: %s', $e.message, $e.code);
@@ -53,7 +53,7 @@ try {
 
 ```php
 try {
-    $nid = client.sendNotificationByChannelsAndAppVersion('app-key', ['channel1'], ['version1'], 'hello world');
+    $nid = client.sendNotificationByChannelsAndAppVersion('app-key', array('channel1'), array('version1'), 'hello world');
     echo sprintf('notification id: %s' , $nid);
 } catch (TuisongbaoException $e) {
     echo sprintf('error message: %s, ack code: %s', $e.message, $e.code);
@@ -64,7 +64,7 @@ try {
 
 ```php
 try {
-    $nid = client.sendNotificationByTokens('app-key', ['token1'], 'hello world');
+    $nid = client.sendNotificationByTokens('app-key', array('token1'), 'hello world');
     echo sprintf('notification id: %d' , $nid);
 } catch (TuisongbaoException $e) {
     echo sprintf('error message: %s, ack code: %s', $e.message, $e.code);
@@ -83,13 +83,13 @@ try {
 from datetime import datetime
 
 options = array();
-options['extra'] = {
+options['extra'] = array(
     "aps" => array(
         "alert" => array(
             "body" => "hello world",
             "action-loc-key" => "",
             "loc-key" => "",
-            "loc-args" => [],
+            "loc-args" => array(),
             "launch-image" => ""
         ),
         "badge" => 1,
