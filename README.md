@@ -11,7 +11,7 @@ PHP版本要求：>=5.2
 ### Example 1:  初始化客户端
 
 ```php
-require "tuisongbao/lib/client.php"
+require "tuisongbao/lib/client.php";
 
 client = new Client('tuisongbao-api-key', 'tuisongbao-api-secret');
 ```
