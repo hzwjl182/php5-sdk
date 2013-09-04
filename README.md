@@ -3,10 +3,21 @@
 [![Build Status](https://travis-ci.org/tuisongbao/php5-sdk.png?branch=master)](https://travis-ci.org/tuisongbao/php5-sdk)
 
 ### 安装
+
 PHP版本要求：>=5.2
 
+- pear
+
+    ```bash
     pear channel-discover tuisongbao.pearfarm.org
     pear install tuisongbao/tuisongbao
+    ```
+
+- composer
+
+    ```bash
+    composer install tuisongbao/tuisongbao
+    ```
 
 ### Example 1:  初始化客户端
 

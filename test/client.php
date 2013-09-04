@@ -15,7 +15,7 @@
 
     protected function setUp()
     {
-        $this->client = new Client(self::API_KEY, self::API_SECRET);
+      $this->client = new Client(self::API_KEY, self::API_SECRET);
     }
 
     public function testSendNotificationToAll()

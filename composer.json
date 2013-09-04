@@ -1,0 +1,18 @@
+{
+    "name": "tuisongbao/tuisongbao",
+    "type": "library",
+    "description": "tuisongbao SDK",
+    "keywords": ["tuisongbao", "sdk", "push", "notification"],
+    "homepage": "https://github.com/tuisongbao/php5-sdk",
+    "license": "Apache",
+    "authors": [
+        {
+            "name": "tuisongbao",
+            "email": "support@tuisongbao.com",
+            "homepage": "http://www.tuisongbao.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0"
+    }
+}
