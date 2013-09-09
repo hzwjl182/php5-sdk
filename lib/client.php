@@ -4,6 +4,7 @@
   if (!function_exists('curl_init')) {
     throw new Exception('tuisongbao needs the CURL PHP extension.');
   }
+
   if (!function_exists('json_decode')) {
     throw new Exception('tuisongbao needs the JSON PHP extension.');
   }
@@ -11,8 +12,8 @@
   class Client
   {
     const FORMAT = 'json';
-    const API_VERSION = '1.0';
-    const BASE_URL = 'http://rest.tuisongbao.com';
+    const API_VERSION = '1.1';
+    const BASE_URL = 'http://rest.test.tuisongbao.com';
     const NOTIFICATION_URL = '/notification';
 
     public function __construct($apikey, $apisecret)
@@ -24,47 +25,16 @@
       $this->sysParams['v'] = self::API_VERSION;
     }
 
-    public function sendNotificationToAll($appkey, $message, $options=array())
+    public function sendNotification($appkey, $message, $target, $options=array())
     {
       $options['appkey'] = $appkey;
       $options['message'] = $message;
 
-      return $this->_sendNotification($options);
-    }
-
-    public function sendNotificationByTokens($appkey, $tokens, $message, $options=array())
-    {
-      $options['appkey'] = $appkey;
-      $options['tokens'] = $tokens;
-      $options['message'] = $message;
-
-      return $this->_sendNotification($options);
-    }
-
-    public function sendNotificationByChannels($appkey, $channels, $message, $options=array())
-    {
-      $options['appkey'] = $appkey;
-      $options['channels'] = $channels;
-      $options['message'] = $message;
-
-      return $this->_sendNotification($options);
-    }
-
-    public function sendNotificationByAppVersion($appkey, $appv, $message, $options=array())
-    {
-      $options['appkey'] = $appkey;
-      $options['appv'] = $appv;
-      $options['message'] = $message;
-
-      return $this->_sendNotification($options);
-    }
-
-    public function sendNotificationByChannelsAndAppVersion($appkey, $channels, $appv, $message, $options=array())
-    {
-      $options['appkey'] = $appkey;
-      $options['channels'] = $channels;
-      $options['appv'] = $appv;
-      $options['message'] = $message;
+      if (sizeof($target) > 0) {
+        $options['target'] = $target;
+      } else {
+        $options['target'] = (Object)null;
+      }
 
       return $this->_sendNotification($options);
     }
