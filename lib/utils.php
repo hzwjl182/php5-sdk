@@ -16,7 +16,7 @@
       $result = date(self::DATETIME_FORMAT, $timestamp);
 
       date_default_timezone_set($defaultTimezone);
-
+      
       return $result;
     }
 

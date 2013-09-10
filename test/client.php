@@ -35,6 +35,33 @@
       $this->assertTrue(is_int($nid));
     }
 
+    public function testSendNotificationToAllWithEmptyMessageAndExtra()
+    {
+      $options = array(
+        'extra' => array(
+          'key' => 'value'
+        )
+      );
+
+      $nid = $this->client->sendNotification(self::APP_KEY, NULL, array(), $options);
+      $this->assertTrue(is_int($nid));
+    }
+
+    public function testSendNotificationToAllWithUserData()
+    {
+      $nid = $this->client->sendNotification(self::APP_KEY, 'to all with userData {{{name}}}', array());
+      $this->assertTrue(is_int($nid));
+    }
+
+    public function testSendNotificationToAllWithESTIn3MinutesLater()
+    {
+      $options = array(
+        'est' => mktime() + 3 * 60
+      );
+      $nid = $this->client->sendNotification(self::APP_KEY, 'to all with est in 3 minutes', array(), $options);
+      $this->assertTrue(is_int($nid));
+    }
+
     public function testSendNotificationByTokens()
     {
       $target = array(
@@ -45,14 +72,36 @@
       $this->assertTrue(is_int($nid));
     }
 
+    public function testSendNotificationByInvalidTokensWithUserData()
+    {
+      $target = array(
+        'tokens' => array('invalid tokens')
+      );
+
+      $nid = $this->client->sendNotification(self::APP_KEY, 'by invalid tokens with userData {{{name}}}', $target);
+      $this->assertTrue(is_int($nid));
+    }
+
     public function testSendNotificationByTargetFilters()
     {
       $target = array(
-        'appversion' => array('8.0.7'),
-        'tagInclude' => array('App')
+        'appversion' => array('8.0.7', 'invalid appversion'),
+        'locationcode' => array('310115', 'invalid locationcode'),
+        'taginclude' => array('App', 'invalid taginclude'),
+        'tagexclude' => array('invalid tagexclude')
       );
 
-      $nid = $this->client->sendNotification(self::APP_KEY, 'by other target filters', $target);
+      $nid = $this->client->sendNotification(self::APP_KEY, 'by target filters', $target);
+      $this->assertTrue(is_int($nid));
+    }
+
+    public function testSendNotificationByTargetWithLastLaunchTime()
+    {
+      $target = array(
+        'lastlaunchtime' => date('Y-m-d H:i:s', mktime())
+      );
+
+      $nid = $this->client->sendNotification(self::APP_KEY, 'by target with last launch time', $target);
       $this->assertTrue(is_int($nid));
     }
 
@@ -103,8 +152,8 @@
     public function testSendNotificationByTooMuchTokens()
     {
       $tokens = array();
-      for ($i = 0; $i < 300; $i++) {
-        $tokens + array('token');
+      for ($i = 0; $i < 1001; $i++) {
+        $tokens[] = 'token';
       }
 
       $target = array(
@@ -147,13 +196,31 @@
 
     /**
      * @expectedException TuisongbaoException
+     * @expectedExceptionCode 20
+     * @expectedExceptionMessage 请求参数不符合要求 或 请求无法处理
+     */
+    public function testSendNotificationByTargetWithWrongLastLaunchTimeFormat()
+    {
+      $target = array(
+        'lastlaunchtime' => 'wrong format'
+      );
+
+      $nid = $this->client->sendNotification(self::APP_KEY, 'by target with last launch time', $target);
+      $this->assertTrue(is_int($nid));
+    }
+
+    /**
+     * @expectedException TuisongbaoException
      * @expectedExceptionCode 24
      * @expectedExceptionMessage appversion全部无效
      */
     public function testSendNotificationByTargetWithInvalidAppVersion()
     {
       $target = array(
-        'appversion' => ['invalid appversion']
+        'appversion' => array('invalid appversion'),
+        'locationcode' => array('310115', 'invalid locationcode'),
+        'taginclude' => array('App', 'invalid taginclude'),
+        'tageclude' => array('invalid tagexclude')
       );
 
       $nid = $this->client->sendNotification(self::APP_KEY, 'by target with invalid appversion', $target);
@@ -168,7 +235,10 @@
     public function testSendNotificationByTargetWithInvalidLocationCode()
     {
       $target = array(
-        'locationcode' => ['invalid locationcode']
+        'locationcode' => array('invalid locationcode'),
+        'appversion' => array('8.0.7', 'invalid appversion'),
+        'taginclude' => array('App', 'invalid taginclude'),
+        'tagexclude' => array('invalid tagexclude'),
       );
 
       $nid = $this->client->sendNotification(self::APP_KEY, 'by target with invalid locationcode', $target);
@@ -183,7 +253,10 @@
     public function testSendNotificationByTargetWithInvalidTagInclude()
     {
       $target = array(
-        'taginclude' => ['invalid taginclude']
+        'taginclude' => array('invalid taginclude'),
+        'appversion' => array('8.0.7', 'invalid appversion'),
+        'locationcode' => array('310115', 'invalid locationcode'),
+        'tagexclude' => array('invalid tagexclude')
       );
 
       $nid = $this->client->sendNotification(self::APP_KEY, 'by target with invalid taginclude', $target);
@@ -195,7 +268,7 @@
      * @expectedExceptionCode 27
      * @expectedExceptionMessage 消息内容和extra总长度应大于0且小于规定长度
      */
-    public function testSendNotificationToAllWithEmptyMessage()
+    public function testSendNotificationToAllWithEmptyMessageAndEmptyExtra()
     {
       $nid = $this->client->sendNotification(self::APP_KEY, '', array());
       $this->assertTrue(is_int($nid));
@@ -208,8 +281,8 @@
      */
     public function testSendNotificationToAllWithTooLongMessage()
     {
-      $tooLongMessage = 'to all with too long message';
-      for ($i = 0; $i < 300; $i++) {
+      $tooLongMessage = 'to all with too long message ';
+      while (strlen($tooLongMessage) < 208) {
         $tooLongMessage .= 'm';
       }
 
@@ -220,12 +293,13 @@
     /**
      * @expectedException TuisongbaoException
      * @expectedExceptionCode 27
-     * @expectedExceptionMessage 信息内容和extra内容总长度应大于0且小于规定长度
+     * @expectedExceptionMessage 消息内容和extra总长度应大于0且小于规定长度
      */
     public function testSendNotificationToAllWithTooLongExtra()
     {
+      $message = 'to all with too long extra ';
       $tooLongExtraValue = '';
-      for ($i = 0; $i < 300; $i++) {
+      while ((strlen($tooLongExtraValue) + strlen($message)) < 198) {
         $tooLongExtraValue .= 'm';
       }
 
@@ -235,7 +309,7 @@
         )
       );
 
-      $nid = $this->client->sendNotification(self::APP_KEY, 'to all with too long extra', array(), $options);
+      $nid = $this->client->sendNotification(self::APP_KEY, $message, array(), $options);
       $this->assertTrue(is_int($nid));
     }
 
@@ -248,7 +322,7 @@
     {
       $options = array(
         'extra' => array(
-          'key1.period' => 'value1'
+          'key.period' => 'value'
         )
       );
 
@@ -261,12 +335,12 @@
      * @expectedExceptionCode 29
      * @expectedExceptionMessage 定时推送时间小于当前时间
      */
-    public function testSendNotificationToAllByExpiredEST()
+    public function testSendNotificationToAllWithExpiredEST()
     {
       $options = array(
-        'est' => mktime(2013, 1, 1, 0, 0, 0)
+        'est' => mktime(19, 20, 0, 9, 9, 2010)
       );
-      $nid = $this->client->sendNotification(self::APP_KEY, 'to all by expired est', array(), $options);
+      $nid = $this->client->sendNotification(self::APP_KEY, 'to all with expired est', array(), $options);
       $this->assertTrue(is_int($nid));
     }
 
@@ -278,7 +352,7 @@
     public function testSendNotificationByInvalidTarget()
     {
       $target = array(
-        'lastlaunchtime' => '2010 01-01 00:00:00'
+        'lastlaunchtime' => '2010-01-01 00:00:00'
       );
 
       $nid = $this->client->sendNotification(self::APP_KEY, 'by invalid target', $target);

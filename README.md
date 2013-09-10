@@ -63,7 +63,7 @@ $appKey = 'your-app-key';
 $message = '天气通新版本发布了，欢迎下载';
 $options = array(
     'extra' => $extra,
-    'est' => mktime(2013, 10, 1, 0, 0, 0)   // 定时发送
+    'est' => mktime(0, 0, 0, 10, 1, 2013)   // 定时发送
 );
 
 try {
@@ -78,7 +78,7 @@ try {
 
 * 参数 `options(array)` 是可选的，可用于设置 `extra` 、 `est` 等可选项。
 * 当推送给iOS设备时，如果 `extra` 中含有 `aps` 字段， `message` 会被忽略。
-* `est` 必须为 **timestamp**  类型（不需要考虑时区），例如：`mktime(2013, 10, 1, 0, 0, 0)`
+* `est` 必须为 **timestamp**  类型（不需要考虑时区），例如：`mktime(0, 0, 0, 10, 1, 2013)`
 
 ### 查询推送状态
 
@@ -112,7 +112,7 @@ options['extra'] = array(
     "key1" => "value1",
     "key2" => "value2"
 );
-options['est'] = mktime(2013, 7, 7, 0, 0, 0);
+options['est'] = mktime(0, 0, 0, 10, 1, 2013);
 
 try {
     $nid = $client.sendNotification('app-key', 'this wil be ignored', $target, options);
